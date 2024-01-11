@@ -33,4 +33,4 @@ sed -i '/^sudo \/etc\/init.d\/nginx reload$/i sudo /etc/init.d/php8.3-fpm-clts r
 echo "www ALL=(ALL:ALL) NOPASSWD: /etc/init.d/php8.3-fpm-clts reload, /etc/init.d/php8.3-fpm-clts restart" >> /etc/sudoers.d/magic
 
 # Output completion message
-echo "Tout est OK3"
+service php8.3-fpm-clts status
