@@ -1,0 +1,33 @@
+#!/bin/bash
+
+apt update
+apt upgrade -y
+
+# Install du php8.3
+apt install -y php8.3 php8.3-bcmath php8.3-bz2 php8.3-cli php8.3-common php8.3-curl php8.3-fpm php8.3-gd php8.3-imap php8.3-intl php8.3-mbstring php8.3-mysql php8.3-opcache php8.3-pgsql php8.3-readline php8.3-soap php8.3-xml php8.3-zip php8.3-xmlrpc php8.3-imagick
+
+# Rajour du php8.3 dans le script /root/scripts/services
+sed -i '/^NAME_1="/ s/"$/ php8.3-fpm php8.3-fpm-clts"/' /root/scripts/services
+sed -i '/^NAME_2="/ s/"$/ php8.3-fpm php8.3-fpm-clts"/' /root/scripts/services
+
+# Déclarer wps-dev-pri
+echo "185.100.5.161 wps-dev-pri" >> /etc/hosts
+
+# Création du binaire php-fpm8.3-clts
+cp -rp /usr/sbin/php-fpm8.3 /usr/sbin/php-fpm8.3-clts
+
+# Rsync de la config depuis wps-dev-pri
+rsync -ave "ssh -p 22222" wps-dev-pri:/etc/init.d/php8.3-fpm-clts /etc/init.d/php8.3-fpm-clts
+rsync -ave "ssh -p 22222" wps-dev-pri:/etc/php/8.3/ /etc/php/8.3/
+
+# Démarrage du php8.3-fpm-clts
+/etc/init.d/php8.3-fpm-clts start
+
+# Redémarrage des services afin de vérifier
+/root/scripts/services restart
+
+# Vérif des PHP8.3
+service php8.3-fpm-clts status
+
+# Output completion message
+echo "Tout est OK"
